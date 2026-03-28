@@ -48,14 +48,14 @@ You can install Postman via this website: https://www.postman.com/downloads/
     (You might want to use `cargo check` if you only need to verify your work without running the app.)
 
 ## Mandatory Checklists (Publisher)
--   [ ] Clone https://gitlab.com/ichlaffterlalu/bambangshop to a new repository.
+-   [x] Clone https://gitlab.com/ichlaffterlalu/bambangshop to a new repository.
 -   **STAGE 1: Implement models and repositories**
-    -   [ ] Commit: `Create Subscriber model struct.`
-    -   [ ] Commit: `Create Notification model struct.`
-    -   [ ] Commit: `Create Subscriber database and Subscriber repository struct skeleton.`
-    -   [ ] Commit: `Implement add function in Subscriber repository.`
-    -   [ ] Commit: `Implement list_all function in Subscriber repository.`
-    -   [ ] Commit: `Implement delete function in Subscriber repository.`
+    -   [x] Commit: `Create Subscriber model struct.`
+    -   [x] Commit: `Create Notification model struct.`
+    -   [x] Commit: `Create Subscriber database and Subscriber repository struct skeleton.`
+    -   [x] Commit: `Implement add function in Subscriber repository.`
+    -   [x] Commit: `Implement list_all function in Subscriber repository.`
+    -   [x] Commit: `Implement delete function in Subscriber repository.`
     -   [ ] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
 -   **STAGE 2: Implement services and controllers**
     -   [ ] Commit: `Create Notification service struct skeleton.`
@@ -77,6 +77,23 @@ This is the place for you to write reflections:
 ### Mandatory (Publisher) Reflections
 
 #### Reflection Publisher-1
+
+1. **Apakah masih perlu interface/trait untuk `Subscriber`, atau cukup satu `struct` saja?**  
+   Menurut saya, untuk kasus BambangShop ini **satu `struct` saja sudah cukup**. Alasannya, saat ini semua subscriber punya bentuk data yang sama, yaitu `url` dan `name`, lalu perilakunya juga sama: menerima notifikasi. Jadi kalau belum ada variasi perilaku yang berbeda-beda, membuat `trait` sebenarnya belum terlalu perlu. (aka belum terlalu butuh `interface`)  
+   `trait` akan lebih berguna kalau nanti ada beberapa jenis subscriber dengan cara kerja berbeda, misalnya ada subscriber yang menerima notifikasi lewat HTTP, ada yang lewat email, atau ada yang menyimpan notifikasi ke database. Kalau kondisinya masih sederhana, `struct` lebih mudah dipahami dan lebih ringan (aka `concrete` class).
+
+2. **Apakah `Vec` cukup, atau perlu `DashMap` karena `id` dan `url` harus unik?**  
+   Untuk kasus ini, **`DashMap` lebih cocok** daripada `Vec`. Walaupun `Vec` bisa dipakai untuk menyimpan data, pencarian berdasarkan `id` atau `url` akan menjadi lambat karena harus dicek satu per satu. Selain itu, memastikan data unik di `Vec` juga lebih ribet, karena kita harus manual memeriksa apakah `id` atau `url` sudah ada.  
+   Dengan `DashMap` (konsep `Map`), kita bisa langsung menyimpan data berdasarkan key, misalnya `id` untuk program atau `url` untuk subscriber. Jadi akses data lebih cepat dan struktur datanya lebih sesuai untuk kebutuhan repository. Jadi, untuk kasus ini `DashMap` lebih tepat dibanding `Vec`.
+
+3. **Apakah masih perlu `DashMap`, atau cukup implement Singleton saja?**  
+   Menurut saya, **masih perlu `DashMap`**. Singleton dan `DashMap` sebenarnya menyelesaikan masalah yang berbeda.  
+   - **Singleton** dipakai supaya hanya ada satu instance database atau storage yang digunakan bersama.  
+   - **DashMap** dipakai supaya data di dalam storage itu aman diakses secara bersamaan oleh banyak thread.  
+
+   Jadi, kalau hanya memakai Singleton tanpa `DashMap`, kita memang punya satu data global, tetapi belum tentu aman kalau ada akses bersamaan dari beberapa request.
+   Kesimpulannya, untuk kasus ini **Singleton saja tidak cukup**. Kita tetap butuh `DashMap` agar akses data aman dan sesuai dengan kebutuhan program concurrent di Rust.
+
 
 #### Reflection Publisher-2
 
