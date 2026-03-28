@@ -133,3 +133,31 @@ This is the place for you to write reflections:
 
 
 #### Reflection Publisher-3
+
+1. **Dalam tutorial ini, variasi Observer Pattern yang dipakai itu Push atau Pull?**  
+   Menurut saya, yang dipakai adalah **Push model**. Alasannya, publisher langsung mengirim data notifikasi ke subscriber.  
+   Hal ini terlihat di [`crate::service::notification::NotificationService::notify`](src/service/notification.rs), karena di sana publisher mengambil daftar subscriber dari [`crate::repository::subscriber::SubscriberRepository`](src/repository/subscriber.rs), lalu langsung memanggil [`crate::model::subscriber::Subscriber::update`](src/model/subscriber.rs) untuk mengirim HTTP POST ke subscriber.  
+   Jadi, subscriber tidak mengambil data sendiri, tetapi **data didorong langsung oleh publisher**.
+
+2. **Apa kelebihan dan kekurangan jika memakai Pull model?**  
+   Kalau tutorial ini memakai **Pull model**, maka subscriber harus mengambil data sendiri dari publisher saat butuh.  
+   **Kelebihannya:**
+   - publisher jadi lebih ringan, karena tidak perlu mengirim detail data ke semua subscriber,
+   - subscriber bisa memilih data mana yang ingin diambil,
+   - cocok kalau data yang dibutuhkan subscriber berbeda-beda.
+
+   **Kekurangannya:**
+   - subscriber harus melakukan request tambahan untuk mengambil data,
+   - alurnya jadi lebih lambat karena ada proses “tanya dulu baru dapat data”,
+   - implementasinya lebih ribet untuk kasus notifikasi sederhana seperti ini.
+
+   Menurut saya, untuk BambangShop, Push model lebih cocok karena tujuan utamanya memang langsung mengirim notifikasi saat ada produk dibuat, dihapus, atau dipromosikan.
+
+3. **Apa yang terjadi kalau proses notifikasi tidak memakai multithreading?**  
+   Kalau tidak memakai multithreading, maka pengiriman notifikasi akan dilakukan **satu per satu secara berurutan** di thread utama.  
+   Akibatnya:
+   - response request bisa jadi lebih lambat,
+   - kalau subscriber-nya banyak, proses notifikasi akan terasa lama,
+   - kalau satu subscriber lambat merespons, subscriber lain ikut tertunda.
+
+   Dengan multithreading seperti yang dipakai di [`crate::service::notification::NotificationService::notify`](src/service/notification.rs), setiap notifikasi bisa dikirim secara paralel ke banyak subscriber. Jadi program lebih responsif dan cocok untuk kasus notifikasi yang jumlah subscriber-nya bisa banyak.
