@@ -1,5 +1,5 @@
-# BambangShop Publisher App
-Tutorial and Example for Advanced Programming 2024 - Faculty of Computer Science, Universitas Indonesia
+# BambangShop Publisher App by Neal Guarddin (2406348282)
+Neal already followed all tutorials procedures and it all work well.
 
 ---
 
@@ -56,13 +56,13 @@ You can install Postman via this website: https://www.postman.com/downloads/
     -   [x] Commit: `Implement add function in Subscriber repository.`
     -   [x] Commit: `Implement list_all function in Subscriber repository.`
     -   [x] Commit: `Implement delete function in Subscriber repository.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
+    -   [x] Write answers of your learning module's "Reflection Publisher-1" questions in this README.
 -   **STAGE 2: Implement services and controllers**
-    -   [ ] Commit: `Create Notification service struct skeleton.`
-    -   [ ] Commit: `Implement subscribe function in Notification service.`
-    -   [ ] Commit: `Implement subscribe function in Notification controller.`
-    -   [ ] Commit: `Implement unsubscribe function in Notification service.`
-    -   [ ] Commit: `Implement unsubscribe function in Notification controller.`
+    -   [x] Commit: `Create Notification service struct skeleton.`
+    -   [x] Commit: `Implement subscribe function in Notification service.`
+    -   [x] Commit: `Implement subscribe function in Notification controller.`
+    -   [x] Commit: `Implement unsubscribe function in Notification service.`
+    -   [x] Commit: `Implement unsubscribe function in Notification controller.`
     -   [ ] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
 -   **STAGE 3: Implement notification mechanism**
     -   [ ] Commit: `Implement update method in Subscriber model to send notification HTTP requests.`
@@ -96,5 +96,40 @@ This is the place for you to write reflections:
 
 
 #### Reflection Publisher-2
+
+1. **Kenapa `Service` dan `Repository` perlu dipisah dari `Model`?**  
+   Menurut saya, pemisahan ini penting supaya kode lebih rapi dan sesuai dengan tugas masing-masing.  
+   - **Model** sebaiknya hanya berisi bentuk data, misalnya [`crate::model::product::Product`](src/model/product.rs), [`crate::model::subscriber::Subscriber`](src/model/subscriber.rs), dan [`crate::model::notification::Notification`](src/model/notification.rs).  
+   - **Repository** seperti [`crate::repository::subscriber::SubscriberRepository`](src/repository/subscriber.rs) dipakai untuk urusan data storage, misalnya simpan, ambil, dan hapus data.  
+   - **Service** seperti [`crate::service::notification::NotificationService`](src/service/notification.rs) dipakai untuk business logic, misalnya aturan subscribe, unsubscribe, dan proses notifikasi.  
+
+   Kalau semua digabung ke Model, kode akan jadi “gemuk” dan campur aduk serta lebih mudah dimaintain. Dengan dipisah, kode lebih mudah dibaca, lebih gampang diuji, dan kalau ada perubahan kita tidak perlu bongkar semuanya.
+
+2. **Apa yang terjadi kalau kita hanya memakai `Model` saja?**  
+   Kalau hanya memakai Model, maka Model akan menanggung terlalu banyak tugas: menyimpan data, menjalankan logika bisnis, bahkan mungkin mengurus komunikasi antar objek. Akhirnya Model jadi terlalu kompleks.  
+
+   Dalam kasus BambangShop, hubungan antara `Program`, `Subscriber`, dan `Notification` bisa membuat Model saling bergantung satu sama lain. Misalnya:
+   - `Product` harus tahu kapan harus memanggil notifikasi,
+   - `Subscriber` harus tahu cara menerima request HTTP,
+   - `Notification` harus tahu isi pesan yang dikirim.
+
+   Kalau semua masuk ke Model, kode jadi lebih sulit dipahami dan lebih susah dimaintain. Perubahan kecil di satu bagian bisa memengaruhi banyak bagian lain. Jadi, pemisahan `Service` dan `Repository` membantu agar tanggung jawab tiap bagian tetap jelas. At least ini pemisahan simpel sebelum menggunakan prinsip S.O.L.I.D.
+
+3. **Apa manfaat Postman untuk menguji pekerjaan ini?**  
+   Postman sangat membantu karena kita bisa mencoba endpoint API tanpa harus membuat frontend dulu. Jadi, kita bisa langsung cek apakah fitur seperti subscribe dan unsubscribe sudah jalan atau belum.  
+
+   Contohnya, saya bisa mengirim request ke endpoint subscribe lewat [src/controller/mod.rs](src/controller/mod.rs) yang sudah me-mount route notification, lalu melihat apakah response-nya sudah sesuai. Dari screenshot contoh, request `POST /notification/subscribe/<product_type>` bisa langsung dites dengan body JSON. Itu memudahkan untuk memastikan:
+   - request sudah diterima,
+   - data subscriber tersimpan,
+   - response status sudah benar,
+   - format JSON sudah sesuai.
+
+   Fitur Postman yang menurut saya paling berguna:
+   - **Collection** untuk menyimpan banyak endpoint (muncul banyak JSON yang kita import)
+   - **Body JSON** untuk kirim data request (testing data, entah itu Notification/Subscribe atau Product/List All Products),
+   - **Headers** untuk atur `Content-Type` (biasanya lebih bagus JSON),
+
+   Buat proyek kelompok atau proyek software engineering ke depan, Postman membantu banget karena testing API jadi lebih cepat, rapi, dan gampang diulang.
+
 
 #### Reflection Publisher-3
