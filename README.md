@@ -63,7 +63,7 @@ You can install Postman via this website: https://www.postman.com/downloads/
     -   [x] Commit: `Implement subscribe function in Notification controller.`
     -   [x] Commit: `Implement unsubscribe function in Notification service.`
     -   [x] Commit: `Implement unsubscribe function in Notification controller.`
-    -   [ ] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
+    -   [x] Write answers of your learning module's "Reflection Publisher-2" questions in this README.
 -   **STAGE 3: Implement notification mechanism**
     -   [ ] Commit: `Implement update method in Subscriber model to send notification HTTP requests.`
     -   [ ] Commit: `Implement notify function in Notification service to notify each Subscriber.`
@@ -127,7 +127,7 @@ This is the place for you to write reflections:
    Fitur Postman yang menurut saya paling berguna:
    - **Collection** untuk menyimpan banyak endpoint (muncul banyak JSON yang kita import)
    - **Body JSON** untuk kirim data request (testing data, entah itu Notification/Subscribe atau Product/List All Products),
-   - **Headers** untuk atur `Content-Type` (biasanya lebih bagus JSON),
+   - **Headers** untuk atur `Content-Type` (biasanya lebih bagus untuk raw JSON),
 
    Buat proyek kelompok atau proyek software engineering ke depan, Postman membantu banget karena testing API jadi lebih cepat, rapi, dan gampang diulang.
 
